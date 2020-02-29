@@ -5,7 +5,13 @@ import {
   TODO_CREATE_FAILED,
   TODOS_GET_REQUESTED,
   TODOS_GET_SUCCEEDED,
-  TODOS_GET_FAILED
+  TODOS_GET_FAILED,
+  TODO_UPDATE_REQUESTED,
+  TODO_UPDATE_SUCCEEDED,
+  TODO_UPDATE_FAILED,
+  TODO_DELETE_REQUESTED,
+  TODO_DELETE_SUCCEEDED,
+  TODO_DELETE_FAILED
 } from '../constants'
 
 import storage from 'redux-persist/lib/storage'
@@ -102,6 +108,91 @@ const getTodos = (state = getTodosInitialState, action) => {
       return state
   }
 }
+
+const updateTodoInitialState = {
+  isFetching: false,
+  isError: false,
+  response: {
+    status: '',
+    data: '',
+    errorMessage: ''
+  }
+}
+
+const updateTodo = (state = updateTodoInitialState, action) => {
+  switch (action.type) {
+    case TODO_UPDATE_REQUESTED:
+      return {
+        ...updateTodoInitialState,
+        isFetching: true
+      }
+    case TODO_UPDATE_SUCCEEDED:
+      return {
+        ...updateTodoInitialState,
+        response: {
+          ...updateTodoInitialState.response,
+          status: action.response.status,
+          data: action.response.data
+        }
+      }
+    case TODO_UPDATE_FAILED:
+      return {
+        ...updateTodoInitialState,
+        isError: true,
+        response: {
+          ...updateTodoInitialState.response,
+          status: action.response.status,
+          data: action.response.data,
+          errorMessage: action.message
+        }
+      }
+    default:
+      return state
+  }
+}
+
+const deleteTodoInitialState = {
+  isFetching: false,
+  isError: false,
+  response: {
+    status: '',
+    data: '',
+    errorMessage: ''
+  }
+}
+
+const deleteTodo = (state = deleteTodoInitialState, action) => {
+  switch (action.type) {
+    case TODO_UPDATE_REQUESTED:
+      return {
+        ...deleteTodoInitialState,
+        isFetching: true
+      }
+    case TODO_UPDATE_SUCCEEDED:
+      return {
+        ...deleteTodoInitialState,
+        response: {
+          ...deleteTodoInitialState.response,
+          status: action.response.status,
+          data: action.response.data
+        }
+      }
+    case TODO_UPDATE_FAILED:
+      return {
+        ...deleteTodoInitialState,
+        isError: true,
+        response: {
+          ...deleteTodoInitialState.response,
+          status: action.response.status,
+          data: action.response.data,
+          errorMessage: action.message
+        }
+      }
+    default:
+      return state
+  }
+}
+
 const authPersistConfig = {
   key: 'todos.createTodo',
   storage: storage
@@ -109,5 +200,7 @@ const authPersistConfig = {
 
 export default combineReducers({
   createTodo,
-  getTodos: persistReducer(authPersistConfig, getTodos)
+  getTodos: persistReducer(authPersistConfig, getTodos),
+  updateTodo,
+  deleteTodo
 })

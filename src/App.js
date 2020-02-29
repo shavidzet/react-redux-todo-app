@@ -3,7 +3,13 @@ import logo from './logo.svg'
 import { useSelector, useDispatch } from 'react-redux'
 import './App.css'
 
-const todoItem = (todo, index) => <li key={todo.id}>{todo.name}</li>
+const todoItem = (handleUpdate, handleDelete) => (todo, index) => <li
+  key={todo.id}
+>
+  <span>{todo.name}</span>
+  <button onClick={() => handleUpdate(todo)}>Rename</button>
+  <button onClick={() => handleDelete(todo)}>Delete</button>
+</li>
 
 function App (props) {
   const dispatch = useDispatch()
@@ -21,9 +27,30 @@ function App (props) {
     })
   }
 
+  const handleUpdate = (todo) => {
+    const updatedTodoName = prompt(`What's the new name of todo: ${todo.name}`)
+
+    if (!updatedTodoName) {
+      return
+    }
+
+    dispatch({
+      type: 'TODO_UPDATE_REQUESTED',
+      id: todo.id,
+      name: updatedTodoName
+    })
+  }
+
+  const handleDelete = (todo) => {
+    dispatch({
+      type: 'TODO_DELETE_REQUESTED',
+      id: todo.id
+    })
+  }
+
   useEffect(() => {
     dispatch({
-      type: 'TODOS_GET_REQUESTED',
+      type: 'TODOS_GET_REQUESTED'
     })
   }, [])
 
@@ -49,7 +76,7 @@ function App (props) {
 
       <div>
         <ul>
-          {todos.map(todoItem)}
+          {todos.map(todoItem(handleUpdate, handleDelete))}
         </ul>
       </div>
     </div>
