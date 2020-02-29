@@ -1,45 +1,57 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import logo from './logo.svg'
 import { useSelector, useDispatch } from 'react-redux'
 import './App.css'
 
+const todoItem = (todo, index) => <li key={todo.id}>{todo.name}</li>
+
 function App (props) {
   const dispatch = useDispatch()
-  const testState = useSelector(state => state.root)
-  const characters = useSelector(state => state.characters)
+  const [newTodoName, setTodoName] = useState('')
+  const isPostingTodo = useSelector(state => state.todos.createTodo.isFetching)
+  const isPostedTodo = useSelector(state => state.todos.createTodo.response.status === 200)
+  const isReadingTodos = useSelector(state => state.todos.getTodos.isFetching)
+  const todos = useSelector(state => state.todos.getTodos.response.data)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    dispatch({
+      type: 'TODO_CREATE_REQUESTED',
+      name: newTodoName
+    })
+  }
 
   useEffect(() => {
-    dispatch({ type: 'CHARACTERS_FETCH_REQUESTED' })
+    dispatch({
+      type: 'TODOS_GET_REQUESTED',
+    })
   }, [])
+
+  useEffect(() => {
+    if (isPostedTodo) {
+      setTodoName('')
+    }
+  }, [isPostedTodo])
 
   return (
     <div className="App">
-      <header className="App-header">
-        <div>
-          {characters.isFetching
-            ? <h2>Loading</h2>
-            : <ul>
-              {characters.data.map((character, index) => <li key={index}>{character.name}</li>)}
-            </ul>
-          }
-        </div>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-            Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-            Learn React
-        </a>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          onChange={(e) => setTodoName(e.target.value)}
+          value={newTodoName}
+        />
+        <button>Add</button>
+      </form>
+
+      {isReadingTodos ? <h2>{todos.length ? 'Updating' : 'Fetching'} todos in progress...</h2> : null}
+      {isPostingTodo ? <h2>Posting todos in progress...</h2> : null}
+
+      <div>
         <ul>
-          {testState.map((message, index) => <li key={index}>{message}</li>)}
+          {todos.map(todoItem)}
         </ul>
-        <button onClick={() => dispatch({ type: 'ADD_TEST' })}>Update store</button>
-      </header>
+      </div>
     </div>
   )
 }

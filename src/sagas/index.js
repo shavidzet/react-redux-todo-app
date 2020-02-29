@@ -1,26 +1,55 @@
-import { call, put, takeLatest } from 'redux-saga/effects'
+import { call, put, takeLatest, takeEvery, take, fork, all } from 'redux-saga/effects'
 import axios from 'axios'
+import {
+  TODO_CREATE_REQUESTED,
+  TODO_CREATE_SUCCEEDED,
+  TODO_CREATE_FAILED,
+  TODOS_GET_REQUESTED,
+  TODOS_GET_SUCCEEDED,
+  TODOS_GET_FAILED
+} from '../store/constants'
 
 const Api = {
-  fetchCharacters: () => axios.get('https://rickandmortyapi.com/api/character/')
+  fetchTodos: () => axios.get('http://localhost:5000/todo-api-e3e2c/us-central1/api/todos'),
+  addTodo: (name) => axios.post('http://localhost:5000/todo-api-e3e2c/us-central1/api/todo', { name })
 }
 
-// worker Saga: will be fired on CHARACTERS_FETCH_REQUESTED actions
-function * fetchCharacters (action) {
+const errorStructure = (type, response, message) => ({
+  type,
+  response,
+  message
+})
+
+function * throwErrors (...args) {
+  yield put(errorStructure(...args))
+}
+
+function * createTodo (action, x) {
   try {
-    const characters = yield call(Api.fetchCharacters)
-    yield put({ type: 'CHARACTERS_FETCH_SUCCEEDED', characters })
+    const response = yield call(Api.addTodo, action.name)
+    yield all([
+      put({ type: TODO_CREATE_SUCCEEDED, response }),
+      put({ type: TODOS_GET_REQUESTED })
+    ])
   } catch (e) {
-    yield put({ type: 'CHARACTERS_FETCH_FAILED', message: e.message })
+    const { response, message } = e
+    yield throwErrors(TODO_CREATE_FAILED, response, message)
   }
 }
 
-/*
-  Starts fetchUser on each dispatched `CHARACTERS_FETCH_REQUESTED` action.
-  Allows concurrent fetches of user.
-*/
+function * readTodos () {
+  try {
+    const response = yield call(Api.fetchTodos)
+    yield put({ type: TODOS_GET_SUCCEEDED, response })
+  } catch (e) {
+    const { response, message } = e
+    yield throwErrors(TODOS_GET_FAILED, response, message)
+  }
+}
+
 function * mySaga () {
-  yield takeLatest('CHARACTERS_FETCH_REQUESTED', fetchCharacters)
+  yield takeLatest(TODO_CREATE_REQUESTED, createTodo)
+  yield takeLatest(TODOS_GET_REQUESTED, readTodos)
 }
 
 export default mySaga

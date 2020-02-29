@@ -11,7 +11,7 @@ const sagaMiddleware = createSagaMiddleware()
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['root']
+  whitelist: []
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

@@ -1,9 +1,7 @@
 import { combineReducers } from 'redux'
 
-import root from './root'
-import characters from './characters'
+import todos from './todos'
 
 export default combineReducers({
-  root,
-  characters
+  todos
 })
