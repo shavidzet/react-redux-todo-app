@@ -16,10 +16,10 @@ import {
 } from '../store/constants'
 
 const Api = {
-  fetchTodos: () => axios.get('http://localhost:5000/todo-api-e3e2c/us-central1/api/todos'),
-  addTodo: (name) => axios.post('http://localhost:5000/todo-api-e3e2c/us-central1/api/todo', { name }),
-  updateTodo: (id, name) => axios.put(`http://localhost:5000/todo-api-e3e2c/us-central1/api/todo?id=${id}`, { name }),
-  deleteTodo: (id, name) => axios.delete(`http://localhost:5000/todo-api-e3e2c/us-central1/api/todo?id=${id}`, { name })
+  fetchTodos: () => axios.get('https://us-central1-todo-api-e3e2c.cloudfunctions.net/api/todos'),
+  addTodo: (name) => axios.post('https://us-central1-todo-api-e3e2c.cloudfunctions.net/api/todo', { name }),
+  updateTodo: (id, name) => axios.put(`https://us-central1-todo-api-e3e2c.cloudfunctions.net/api/todo?id=${id}`, { name }),
+  deleteTodo: (id, name) => axios.delete(`https://us-central1-todo-api-e3e2c.cloudfunctions.net/api/todo?id=${id}`, { name })
 }
 
 const errorStructure = (type, response, message) => ({
