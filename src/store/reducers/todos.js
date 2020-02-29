@@ -163,12 +163,12 @@ const deleteTodoInitialState = {
 
 const deleteTodo = (state = deleteTodoInitialState, action) => {
   switch (action.type) {
-    case TODO_UPDATE_REQUESTED:
+    case TODO_DELETE_REQUESTED:
       return {
         ...deleteTodoInitialState,
         isFetching: true
       }
-    case TODO_UPDATE_SUCCEEDED:
+    case TODO_DELETE_SUCCEEDED:
       return {
         ...deleteTodoInitialState,
         response: {
@@ -177,7 +177,7 @@ const deleteTodo = (state = deleteTodoInitialState, action) => {
           data: action.response.data
         }
       }
-    case TODO_UPDATE_FAILED:
+    case TODO_DELETE_FAILED:
       return {
         ...deleteTodoInitialState,
         isError: true,
