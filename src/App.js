@@ -17,6 +17,8 @@ function App (props) {
   const isPostingTodo = useSelector(state => state.todos.createTodo.isFetching)
   const isPostedTodo = useSelector(state => state.todos.createTodo.response.status === 200)
   const isReadingTodos = useSelector(state => state.todos.getTodos.isFetching)
+  const isUpdatingTodo = useSelector(state => state.todos.updateTodo.isFetching)
+  const isDeletingTodo = useSelector(state => state.todos.deleteTodo.isFetching)
   const todos = useSelector(state => state.todos.getTodos.response.data)
 
   const handleSubmit = (e) => {
@@ -73,6 +75,8 @@ function App (props) {
 
       {isReadingTodos ? <h2>{todos.length ? 'Updating' : 'Fetching'} todos in progress...</h2> : null}
       {isPostingTodo ? <h2>Posting todos in progress...</h2> : null}
+      {isUpdatingTodo ? <h2>Updating todos in progress...</h2> : null}
+      {isDeletingTodo ? <h2>Deleting todos in progress...</h2> : null}
 
       <div>
         <ul>
